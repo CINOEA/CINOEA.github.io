@@ -3,6 +3,7 @@ pjs.system.initFullPage();
 pjs.keyControl.initKeyControl('true');
 
 var game = pjs.game;
+var menu = pjs.game;
 var point = pjs.vector.point;
 
 var height = game.getWH().h;
@@ -12,25 +13,22 @@ var fon0 = game.newImageObject({
 	x: 0, y: 0,
 	file: 'imgs/background.jpg',
 	h: height,
-	w:width,
+	w: width,
 });
-
 var fon1 = game.newImageObject({
 	x: 0, y: 0,
 	file: 'imgs/fon.png',
 	h: height,
-	w:width,
+	w: width,
 	onload: function () {
-		fon2.x = fon1.x+fon1.w;
+		fon2.x = fon1.x + fon1.w;
 	}
 });
-
 var fon2 = game.newImageObject({
 	x: 0, y: 0,
 	file: 'imgs/fon.png',
 	h: height
 });
-
 var gr1 = game.newImageObject({
 	x: 0, y: height * (height / width),
 	file: 'imgs/perila_4_angle.png',
@@ -43,39 +41,56 @@ var gr1 = game.newImageObject({
 		hand.y = height * (height / width) - hand.h / 2;
 	}
 });
-
 var gr2 = game.newImageObject({
 	x: 0, y: 0,
 	file: 'imgs/perila_4_angle.png',
 	w: width,
-	onload:function(){
+	onload: function () {
 		badThing2.x = gr2.x;
 		badThing2.y = gr2.y;
 	}
 });
-
 var hand = game.newAnimationObject({
 	x: width / 4, y: 0,
-	h : (200 * height)/662,
-	w : (230 * width)/1366,
+	h: (200 * height) / 662,
+	w: (230 * width) / 1366,
 	delay: 1,
 	animation: pjs.tiles.newAnimation('imgs/run_hand.png', 249.625, 235, 8),
 });
-
+function LightLine(X, Y) {
+	return game.newImageObject({
+		x: X,
+		y: Y,
+		file: 'imgs/light.png',
+		w: width / 10
+	});
+}
 var badThing1 = game.newImageObject({
-	x:0,
-	y:0,
-	file:'imgs/light.png',
-	w:width/10
+	x: 0,
+	y: 0,
+	file: 'imgs/light.png',
+	w: width / 10
 });
 var badThing2 = game.newImageObject({
-	x:0,
-	y:0,
-	file:'imgs/light.png',
-	w:width/10
+	x: 0,
+	y: 0,
+	file: 'imgs/light.png',
+	w: width / 10
 });
-
-
+var scoreCounter = {
+	score: 0,
+	highScore: 0,
+	write: function () {
+		pjs.brush.drawText({
+			text: 'Score: ' + (~~this.score),
+			size: 20,
+			color: '#ffffff'
+		});
+	},
+	increase: function () {
+		this.score += 0.125;
+	}
+};
 var jump = {
 	h: 250,
 	speed: 9 * (height / 662),
@@ -114,30 +129,14 @@ var jump = {
 		else jump.down();
 	}
 };
-
-var scoreCounter = {
-	score: 0,
-	highScore: 0,
-	write: function () {
-		pjs.brush.drawText({
-			text: 'Score: ' + (~~this.score),
-			size: 20,
-			color: '#ffffff'
-		});
-	},
-	increase: function () {
-		this.score += 0.125;
-	}
-};
-
 var moveBackGround = function (s) {
 	fon1.move(point(-s / 2, 0));
 	fon2.move(point(-s / 2, 0));
 
-	gr1.moveAngle(-s , 6.598);
-	gr2.moveAngle(-s , 6.598);
-	badThing1.moveAngle(-s,6.598);
-	badThing2.moveAngle(-s,6.598);
+	gr1.moveAngle(-s, 6.598);
+	gr2.moveAngle(-s, 6.598);
+	badThing1.moveAngle(-s, 6.598);
+	badThing2.moveAngle(-s, 6.598);
 
 	if (fon1.x + fon1.w < 0) {
 		fon1.x = fon2.x + fon2.w;
@@ -150,19 +149,19 @@ var moveBackGround = function (s) {
 	if (gr1.x + gr1.w < 0) {
 		gr1.x = gr2.x + gr2.w;
 		gr1.y = gr2.y + gr2.h / 2.9226;
-		badThing1.x= gr1.x;
+		badThing1.x = gr1.x;
 		badThing1.y = gr1.y;
 	}
 
 	if (gr2.x + gr2.w < 0) {
 		gr2.x = gr1.x + gr1.w;
 		gr2.y = gr1.y + gr1.h / 2.9226;
-		badThing2.x=gr2.x;
-		badThing2.y=gr2.y;
+		badThing2.x = gr2.x;
+		badThing2.y = gr2.y;
 	}
 };
-
 game.newLoop('game', function () {
+	game.clear();
 	game.fill('#D9D9D9');
 
 	fon0.draw();
@@ -179,18 +178,28 @@ game.newLoop('game', function () {
 
 	jump.key();
 
-	if(hand.isIntersect(badThing1) || hand.isIntersect(badThing2)){
-		game.stop();
-		pjs.brush.drawText({
-			y : (height / width) * 100,
-			text: 'GAME OVER',
-			size: (height / width) * 100,
-			color: '#ff0000'
-		});
+	if (hand.isIntersect(badThing1) || hand.isIntersect(badThing2)) {
+		game.setLoop("menu");
 	}
 
 	moveBackGround(8 * (width / 1366));
 });
 
+game.newLoop('menu', function () {
+	game.clear();
+	fon0.draw();
+	pjs.brush.drawText({
+		y: (height / width) * 100,
+		text: 'GAME OVER',
+		size: (height / width) * 100,
+		color: '#ff0000'
+	});
+	pjs.brush.drawText({
+		y: (height / width) * 200,
+		text: 'Score: '+(~~scoreCounter.score),
+size: (height / width) * 100,
+		color: '#32CD32',
+	});
+});
 hand.turn(15);
 game.startLoop('game');
