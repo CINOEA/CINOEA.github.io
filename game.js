@@ -172,7 +172,7 @@ function GetBackground(path) {
 }
 function GetGround() {
     return game.newImageObject({
-        x: 0, y: 500,
+        x: 0, y: height/1.5,
         file: 'imgs/perila_4_flat.png',
         w: width,
 
