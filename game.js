@@ -1,6 +1,7 @@
 var pjs = new PointJS('2d', 1200, 600);
 pjs.system.initFullPage();
 pjs.keyControl.initKeyControl('true');
+pjs.touchControl.initTouchControl();
 
 var game = pjs.game;
 var menu = pjs.game;
@@ -129,7 +130,7 @@ var jump = {
 		}
 	},
 	key: function () {
-		if (pjs.keyControl.isDown("SPACE")) {
+		if (pjs.keyControl.isDown("SPACE") || pjs.touchControl.isDown()) {
 			switch (this.state) {
 				case "up":
 					jump.up();
