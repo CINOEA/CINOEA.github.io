@@ -278,7 +278,7 @@ function createMenu(){
     isInMenu = true;
 }
 function createDeathScreen(){
-    deathScreen = GetBackground("imgs/deathScreen.png");
+    deathScreen = GetBackground("imgs/deathscreen.png");
     buttonReplay = GetButton("imgs/replaybutton.jpg", width/2-200,height-250);
     isInGame = false;    
 }
