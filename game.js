@@ -269,6 +269,5 @@ game.newLoop('deathScreen', function () {
 });
 var mianMusic = pjs.audio.newAudio("Sound/PLAY_1.mp3", 0.1);
 var deathSound = pjs.audio.newAudio("Sound/DEATH_1.mp3", 0.5);
-var jumpSound = pjs.audio.newAudio("Sound/Jump.mp3", 1);
 mianMusic.play();
 game.startLoop('game');
