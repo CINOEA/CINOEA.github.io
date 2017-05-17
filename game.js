@@ -258,7 +258,7 @@ function drawDeathScreen(){
     pjs.brush.drawMultiText({
         y: (height / width) * 100,
         text: 'HighScore: '+ ~~scoreCounter.highScore+'\nScore: '+~~scoreCounter.score,
-        size: (height / width) * 100,
+        size: (height / width) * (width/10),
         color: 'white'
     });
 }
