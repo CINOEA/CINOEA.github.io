@@ -16,18 +16,19 @@ var angle = 7;
 
 var isDebug = false;
 var isPaused = false;
-var isMuted = false;;
+var isMuted = false;
 
 var buttonStart = null;
 var buttonReplay = null;
 var buttonGuide = null;
+var buttonBack = null;
 var buttonMute = null;
 var menuBackground = null;
 
 var background0 = null;
 var background1 = null;
 var background2 = null;
-var backgroundShadow = null;
+var guide = null;
 var deathScreen = null;
 var gr1 = null;
 var gr2 = null;
@@ -59,48 +60,52 @@ var newPoints = {
         var centreX = startPointX + obj.w / 2;
         var centreY = startPointY + obj.h / 2;
 
-        var newP = {
-            x: (startPointX - centreX) * (Math.cos(this.angle * (Math.PI / 180))) - (startPointY - centreY) * (Math.sin(this.angle * (Math.PI / 180))) + centreX,
-            y: (startPointX - centreX) * (Math.sin(this.angle * (Math.PI / 180))) + (startPointY - centreY) * (Math.cos(this.angle * (Math.PI / 180))) + centreY
-        }
-        return newP;
+        var newPoint = {
+            x: (startPointX - centreX) * (Math.cos(this.angle * (Math.PI / 180))) -
+            (startPointY - centreY) * (Math.sin(this.angle * (Math.PI / 180))) + centreX,
+            y: (startPointX - centreX) * (Math.sin(this.angle * (Math.PI / 180))) +
+            (startPointY - centreY) * (Math.cos(this.angle * (Math.PI / 180))) + centreY,
+        };
+        return newPoint;
     },
     connectRaillings: function (obj1, obj2) {
-        var newPointStart = newPoints.rotateObject(obj1);	//������ �������
+        var newPointStart = newPoints.rotateObject(obj1);
 
-        newPointStart.x += obj1.w * Math.cos(this.angle * (Math.PI / 180));// ����� ������ �������
+        newPointStart.x += obj1.w * Math.cos(this.angle * (Math.PI / 180));
         newPointStart.y += obj1.w * Math.sin(this.angle * (Math.PI / 180));
 
-        obj2.x = obj2.y = 0;
-        var newPointEnd = newPoints.rotateObject(obj2);	//������ �������
+        obj2.x = obj2.y = 0;  // use for calculating of new points
+        var newPointEnd = newPoints.rotateObject(obj2);
 
         obj2.x = newPointStart.x - newPointEnd.x;
         obj2.y = newPointStart.y - newPointEnd.y;
     },
-    moveHand: function (obj1, obj2) {
-        var newPointStart = newPoints.rotateObject(obj1);	//������ �������
+    replaceHand: function (obj1, obj2) {
+        var newPointStart = newPoints.rotateObject(obj1);
 
-        newPointStart.x += (width / 4) * Math.cos(this.angle * (Math.PI / 180));// ����� ������ �������
+        newPointStart.x += (width / 4) * Math.cos(this.angle * (Math.PI / 180));
         newPointStart.y += (width / 4) * Math.sin(this.angle * (Math.PI / 180));
 
         obj2.x = obj2.y = 0;
-        var newPointEnd = newPoints.rotateObject(obj2);	//������ �������
+        var newPointEnd = newPoints.rotateObject(obj2);
 
         obj2.x = newPointStart.x - newPointEnd.x;
         obj2.y = newPointStart.y - newPointEnd.y - (obj2.h / Math.cos(this.angle * (Math.PI / 180)));
         jump.startPosition = obj2.y;
     },
-    placeLight: function (obj1, obj2, region) {//---
+    placeLight: function (obj1, obj2, region) {
         var newPointStart = newPoints.rotateObject(obj1);
-        newPointStart.x += ((width + width / region) / Math.cos(this.angle * (Math.PI / 180))) * Math.cos(this.angle * (Math.PI / 180));
-        newPointStart.y += ((width + width / region) / Math.cos(this.angle * (Math.PI / 180))) * Math.sin(this.angle * (Math.PI / 180));
+        newPointStart.x += ((2 * width / region) / 
+            Math.cos(this.angle * (Math.PI / 180))) * Math.cos(this.angle * (Math.PI / 180));
+        newPointStart.y += ((2 * width / region) / 
+            Math.cos(this.angle * (Math.PI / 180))) * Math.sin(this.angle * (Math.PI / 180));
 
         obj2.x = obj2.y = 0;
         var newPointEnd = newPoints.rotateObject(obj2);
 
         obj2.x = newPointStart.x - newPointEnd.x;
         obj2.y = newPointStart.y - newPointEnd.y;
-    }
+    },
 }
 var moveBackGround = function (s) {
     background1.move(point(-s / 2, 0));
@@ -121,12 +126,12 @@ var moveBackGround = function (s) {
 
     if (gr1.x + gr1.w < 0) {
         newPoints.connectRaillings(gr2, gr1);
-        randLine(gr2, badThing1, Math.random() * (width / 6) + width / 6);
+        randLine(gr2, badThing1, Math.random() * (400 - 200) + 200);
     }
 
     if (gr2.x + gr2.w < 0) {
         newPoints.connectRaillings(gr1, gr2);
-        randLine(gr1, badThing2, Math.random() * (width / 6) + width / 6);
+        randLine(gr1, badThing2, Math.random() * (400 - 200) + 200);
     }
 };
 var jump = {
@@ -136,26 +141,26 @@ var jump = {
     state: "down",
     isGrounded: true,
     up: function () {
-        if (hand.y > this.startPosition/*(height * (height / width) - hand.h )*/ - this.h * (height / 662) && this.isGrounded) {
+        if (hand.y > this.startPosition - this.h * (height / 662) && this.isGrounded) {
             hand.y -= this.speed;
             hand.drawFrames(4, 4);
         }
         else this.state = "down";
     },
     down: function () {
-        if (hand.y < this.startPosition/*(height * (height / width) - hand.h )*/) {
+        if (hand.y < this.startPosition) {
             hand.y += this.speed;
             hand.drawFrames(2, 2);
             this.isGrounded = false;
         }
         else {
-            hand.y = this.startPosition/*height * (height / width) - hand.h*/;
+            hand.y = this.startPosition;
             this.state = "up";
             this.isGrounded = true;
         }
     },
     key: function () {
-        if (pjs.keyControl.isDown("SPACE") || pjs.touchControl.isDown()) {
+        if (pjs.keyControl.isDown("SPACE")) {
             switch (this.state) {
                 case "up":
                     jump.up();
@@ -168,7 +173,7 @@ var jump = {
         else {
             jump.down();
         }
-    }
+    },
 };
 
 /// Constructors ///
@@ -188,7 +193,7 @@ function GetLightLine(X, Y) {
         x: X,
         y: Y,
         file: 'imgs/light.png',
-        w: width / 6,
+        w: 200,
         h: 20,
     });
 }
@@ -203,26 +208,19 @@ function GetBackground(path, X) {
 }
 function GetGround() {
     return game.newImageObject({
-        x: 0,
-        y: height - (height / 3),
+        x: 0, y: height - (height / 6),
         file: 'imgs/perila_4_flat.png',
         w: width,
 
     });
 }
-function GetEffects() {
-    return game.newImageObject({
-        x: 0, y: 500,
-        file: 'imgs/ShadowAndLighthingFinal.png',
-    });
-}
-function GetButton(path, X, Y, W, H) {
+function GetButton(path, X, Y) {
     return game.newImageObject({
         x: X || width / 2 - 200,
         y: Y || height / 2 - 100,
         file: path || 'imgs/test.jpg',
-        h: H, 
-        w: W,
+        w: 400,
+        h: 200,
     });
 }
 
@@ -237,10 +235,6 @@ function intersection() {
     var star = hand.x + hand.w * Math.cos(angle * Math.PI / 180) * (0.4);
     var end = hand.x + hand.w * Math.cos(angle * Math.PI / 180) * (0.8);
     if (hand.isIntersect(badThing1) && ((star <= startLight1 && endLight1 <= end) || (startLight1 <= star && endLight1 >= star) || (startLight1 <= end && endLight1 >= end))) {
-        if (!isMuted) {
-            mianMusic.stop();
-            deathSound.play();
-        }
         if (!isDebug) {
             drawDeathScreen();
             game.setLoop("deathScreen");
@@ -250,10 +244,6 @@ function intersection() {
     }
     else {
         if (hand.isIntersect(badThing2) && ((star <= startLight2 && endLight2 <= end) || (startLight2 <= star && endLight2 >= star) || (startLight2 <= end && endLight2 >= end))) {
-            if (!isMuted) {
-                mianMusic.stop();
-                deathSound.play();
-            }
             if (!isDebug) {
                 drawDeathScreen();
                 game.setLoop("deathScreen");
@@ -264,18 +254,22 @@ function intersection() {
     }
 }
 
+function randLine(obj1, obj2, len) {
+    var max = 3;
+    var min = 1;
+    var region = Math.random() * (max - min) + min;
+    obj2.w = len;
+    newPoints.placeLight(obj1, obj2, region);
+}
+
 /// Additional functions ///
 
 function createMenus() {
     createMenu();
-    createGuide();
     createDeathScreen();
 }
 function drawMenu() {
-    game.clear();
     menuBackground.draw();
-    buttonMute.draw();
-    buttonGuide.draw();
     buttonStart.draw();
 }
 function drawDeathScreen() {
@@ -284,9 +278,9 @@ function drawDeathScreen() {
     scoreCounter.highScore = scoreCounter.highScore <= scoreCounter.score ? scoreCounter.score : scoreCounter.highScore;
     pjs.brush.drawMultiText({
         y: (height / width) * 100,
-        text: 'HighScore: ' + ~~scoreCounter.highScore + '\nScore: ' + ~~scoreCounter.score,
-        size: (height / width) * (width / 10),
-        color: 'white'
+        text: 'GAME OVER\nHighScore: ' + ~~scoreCounter.highScore + '\nScore: ' + ~~scoreCounter.score,
+        size: (height / width) * 100,
+        color: 'black'
     });
 }
 function drawGameField() {
@@ -300,21 +294,6 @@ function drawGameField() {
     hand.draw();
     buttonMute.draw();
 }
-function drawGuide(){
-    backgroundShadow.draw();
-    guide.draw();
-}
-function moveEffects() {
-    shadow1.w = badThing1.w * 6;
-    shadow1.x = badThing1.x/*-(badThing1.w*Math.sin(7*Math.PI/180))*/;
-}
-function randLine(obj1, obj2, len) {
-    var max = 3;
-    var min = 1;
-    var region = Math.random() * (max - min) + min;
-    obj2.w = len;
-    newPoints.placeLight(obj1, obj2, region);
-}
 
 /// Debug ///
 
@@ -326,7 +305,7 @@ function debugFunctions() {
     if (pjs.keyControl.isPress('P')) {
         isPaused = !isPaused;
     }
-    if (pjs.keyControl.isPress('Z')) {
+    if(pjs.keyControl.isPress('Z')){
         game.setLoop('menu');
     }
     pjs.brush.drawText({
@@ -345,17 +324,22 @@ function debugFunctions() {
 
 function createMenu() {
     menuBackground = GetBackground("imgs/menuBackground.jpg");
-    buttonGuide = GetButton("imgs/instbut.png", 7*width/10, 65*height/100, width/5, height/5);
-    buttonMute = GetButton("imgs/sounded.png", 5*width/6, height/10);
-    buttonStart = GetButton("imgs/startbutton.jpg", 37*width/100, 37*height/100, width/4, 22*height/100);
+    buttonGuide = GetButton(); // it is needed to be filled
+    buttonMute = GetButton(null, width - 300, 100);
+    buttonStart = GetButton("imgs/startbutton.jpg");
 }
+
 function createDeathScreen() {
-    deathScreen = GetBackground("imgs/deathscreen.png");
+    deathScreen = GetBackground("imgs/deathScreen.png");
     buttonReplay = GetButton("imgs/replaybutton.jpg", width / 2 - 200, height - 250);
 }
-function createGuide() {
-    guide = GetButton("imgs/guide.png", 35*width/100, 33*height/100, width/3, height/2);
-    backgroundShadow = GetBackground("imgs/BackGroundShadow.png")
+function createInstructions(){
+    guide = GetBackground(); // it is needed to be filled
+    buttonBack = GetButton(null, width-300, height - 400); // it is needed to be filled
+}
+function createMenus(){
+    createMenu();
+    createDeathScreen();
 }
 function createGame() {
     game.clear();
@@ -365,8 +349,6 @@ function createGame() {
     background2 = GetBackground('imgs/fon.png', background1.x + background1.w);
     gr1 = GetGround();
     gr2 = GetGround();
-    effects1 = GetEffects();
-	effects2 = GetEffects();
     badThing1 = GetLightLine(0, 0);
     badThing2 = GetLightLine(0, 0);
     hand = GetPlayer();
@@ -375,94 +357,94 @@ function createGame() {
     hand.turn(angle);
     gr1.turn(angle);
     gr2.turn(angle);
-    newPoints.moveHand(gr1, hand);
+    newPoints.replaceHand(gr1, hand);
     newPoints.connectRaillings(gr1, gr2);
     newPoints.placeLight(gr1, badThing1, 1000);
     newPoints.placeLight(gr2, badThing2, 1000);
-    effects1.turn(angle);
-	effects2.turn(angle);
 }
 
-/// Controls ///
+/// Additional functions ///
 
-function mute(){
-    if (pjs.mouseControl.isPeekObject('LEFT', buttonMute) || pjs.touchControl.isPeekObject(buttonMute) || pjs.keyControl.isPress("M")) {
-        isMuted = !isMuted;
-        mianMenuMusic.stop();
-        mianMusic.stop();
-        deathSound.stop();
-    }
-    if(isMuted){
-        buttonMute.setImage("imgs/muted.png");
-    }
-    else{
-        buttonMute.setImage("imgs/sounded.png");
-    }
+function drawMenu(){
+    game.clear();
+    menuBackground.draw();
+    buttonMute.draw();
+    buttonGuide.draw();
+    buttonStart.draw();
+}
+function drawGuide(){
+    game.clear();
+    guide.draw();
+    buttonMute.draw();
+    buttonBack.draw();
+}
+function drawDeathScreen(){
+    deathScreen.draw();
+    buttonReplay.draw();
+    scoreCounter.highScore = scoreCounter.highScore<=scoreCounter.score?scoreCounter.score:scoreCounter.highScore;
+    pjs.brush.drawMultiText({
+        y: (height / width) * 100,
+        text: 'HighScore: '+ ~~scoreCounter.highScore+'\nScore: '+~~scoreCounter.score,
+        size: (height / width) * 100,
+        color: 'white'
+    });
+}
+function randLine(obj1, obj2, len){
+	var max = 3;
+	var min = 1;
+	var region = Math.random() * (max - min) + min;
+    obj2.w = len;
+	newPoints.placeLight(obj1, obj2, region);
 }
 
 /// Loops ///
 
 game.newLoop('game', function () {
-    if (!mianMusic.playing && !isMuted)
-        mianMusic.replay();
     game.clear();
     drawGameField();
-    effects1.draw();
-	effects2.draw();
+
     if (!isPaused) {
         moveBackGround(20 * (width / 1366));
         scoreCounter.increase();
         jump.key();
     }
-    if (isDebug){
+    if (isDebug)
         debugFunctions();
-    }
-    mute();
-    scoreCounter.write();
+
     intersection();
-	moveEffects(); 
+    scoreCounter.write();        
 });
-
-function moveEffects(){
-	effects1.w = badThing1.w*5;
-	effects1.x = badThing1.x+badThing1.w/2-effects1.w/2;
-	effects1.y = badThing1.y+badThing1.h/2-effects1.h/2;
-	effects2.w = badThing2.w*5;
-	effects2.x = badThing2.x+badThing2.w/2-effects2.w/2;
-	effects2.y = badThing2.y+badThing2.h/2-effects2.h/2;
-}
-
 game.newLoop('menu', function () {
-    if (!mianMenuMusic.playing && !isMuted)
-        mianMenuMusic.replay();
-    game.clear();
     drawMenu();
-    if (pjs.mouseControl.isPeekObject('LEFT', buttonStart) || pjs.keyControl.isPress("SPACE") || pjs.touchControl.isPeekObject('buttonStart')) {
-        mianMenuMusic.stop();
+    if (pjs.mouseControl.isPeekObject('LEFT', buttonStart) || pjs.keyControl.isPress("SPACE")) {
         createGame();
         game.setLoop('game');
     }
-    if (pjs.mouseControl.isPeekObject('LEFT', buttonGuide) || pjs.touchControl.isPeekObject(buttonGuide)) {
-        drawGuide();
+    if (pjs.mouseControl.isPeekObject('LEFT', buttonGuide)) {
         game.setLoop('guide');
     }
-    mute();
+    if (pjs.mouseControl.isPeekObject('LEFT', buttonGuide) && !isMuted) {
+        isMuted = !isMuted;
+        mianMenuMusic.stop();
+        mianMusic.stop();
+        deathSound.stop();
+    }
     if (pjs.keyControl.isPress('D')) {
         isDebug = !isDebug;
     }
 });
-game.newLoop('guide', function () {
-    if (pjs.mouseControl.isPress('LEFT') || pjs.touchControl.isDown()) {
+game.newLoop('guide', function(){
+    drawGuide();
+    if (pjs.mouseControl.isPeekObject('LEFT', buttonBack)) {
         game.setLoop('menu');
     }
-    mute();
 });
 game.newLoop('deathScreen', function () {
-    if (pjs.keyControl.isPress("R") || pjs.touchControl.isDown()) {
-        deathSound.stop();
+    if (pjs.keyControl.isPress("R")) {
         createGame();
         game.setLoop('game');
     }
+    
 });
 
 /// Start game ///
