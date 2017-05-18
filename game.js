@@ -437,7 +437,7 @@ game.newLoop('menu', function () {
         mianMenuMusic.replay();
     game.clear();
     drawMenu();
-    if (pjs.mouseControl.isPeekObject('LEFT', buttonStart) || pjs.keyControl.isPress("SPACE") || pjs.touchControl.isPeekObject('buttonStart')) {
+    if (pjs.mouseControl.isPeekObject('LEFT', buttonStart) || pjs.keyControl.isPress("SPACE") || pjs.touchControl.isPeekObject(buttonStart)) {
         mianMenuMusic.stop();
         createGame();
         game.setLoop('game');
