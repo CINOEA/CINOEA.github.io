@@ -304,10 +304,6 @@ function drawGuide(){
     backgroundShadow.draw();
     guide.draw();
 }
-function moveEffects() {
-    shadow1.w = badThing1.w * 6;
-    shadow1.x = badThing1.x/*-(badThing1.w*Math.sin(7*Math.PI/180))*/;
-}
 function randLine(obj1, obj2, len) {
     var max = 3;
     var min = 1;
@@ -355,7 +351,7 @@ function createDeathScreen() {
 }
 function createGuide() {
     guide = GetButton("imgs/guide.png", 35*width/100, 33*height/100, width/3, height/2);
-    backgroundShadow = GetBackground("imgs/BackGroundShadow.png")
+    backgroundShadow = GetBackground("imgs/BackgroundShadow.png")
 }
 function createGame() {
     game.clear();
