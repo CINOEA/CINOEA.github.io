@@ -136,7 +136,7 @@ var jump = {
     state: "down",
     isGrounded: true,
     up: function () {
-        if (hand.y > this.startPosition/*(height * (height / width) - hand.h )*/ - this.h * (height / 662) && this.isGrounded) {
+        if (hand.y > this.startPosition/*(height * (height / width) - hand.h )*/ - this.h * (height / 662)-20 && this.isGrounded) {
             hand.y -= this.speed;
             hand.drawFrames(4, 4);
         }
