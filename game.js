@@ -136,20 +136,20 @@ var jump = {
     state: "down",
     isGrounded: true,
     up: function () {
-        if (hand.y > this.startPosition/*(height * (height / width) - hand.h )*/ - this.h * (height / 662)-20 && this.isGrounded) {
+        if (hand.y > 10+this.startPosition/*(height * (height / width) - hand.h )*/ - this.h * (height / 662) && this.isGrounded) {
             hand.y -= this.speed;
             hand.drawFrames(4, 4);
         }
         else this.state = "down";
     },
     down: function () {
-        if (hand.y < this.startPosition/*(height * (height / width) - hand.h )*/) {
+        if (hand.y < 10+this.startPosition/*(height * (height / width) - hand.h )*/) {
             hand.y += this.speed;
             hand.drawFrames(2, 2);
             this.isGrounded = false;
         }
         else {
-            hand.y = this.startPosition/*height * (height / width) - hand.h*/;
+            hand.y = 10+this.startPosition/*height * (height / width) - hand.h*/;
             this.state = "up";
             this.isGrounded = true;
         }
