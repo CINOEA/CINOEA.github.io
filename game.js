@@ -136,20 +136,20 @@ var jump = {
     state: "down",
     isGrounded: true,
     up: function () {
-        if (hand.y > this.startPosition/*(height * (height / width) - hand.h )*/ - this.h * (height / 662) && this.isGrounded) {
+        if (hand.y > 1+this.startPosition - this.h * (height / 662) && this.isGrounded) {
             hand.y -= this.speed;
             hand.drawFrames(4, 4);
         }
         else this.state = "down";
     },
     down: function () {
-        if (hand.y < this.startPosition/*(height * (height / width) - hand.h )*/) {
+        if (hand.y < 1+this.startPosition) {
             hand.y += this.speed;
             hand.drawFrames(2, 2);
             this.isGrounded = false;
         }
         else {
-            hand.y = this.startPosition/*height * (height / width) - hand.h*/;
+            hand.y = 1+this.startPosition;
             this.state = "up";
             this.isGrounded = true;
         }
@@ -328,6 +328,13 @@ function debugFunctions() {
     pjs.brush.drawText({
         text: 'Debug mode is ON',
         x: width / 2,
+        y: 0,
+        size: 20,
+        color: '#ff0000'
+    });
+	pjs.brush.drawText({
+        text: 'Width = '+width+' '+ 'Height = '+height,
+        x: width / 4,
         y: 0,
         size: 20,
         color: '#ff0000'
