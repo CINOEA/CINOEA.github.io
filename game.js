@@ -11,12 +11,15 @@ var point = pjs.vector.point;
 var height = game.getWH().h;
 var width = game.getWH().w;
 var angle = 7;
+var nM = 0;
+var code = '';
 
 /// Global variables ///
 
 var isDebug = false;
 var isPaused = false;
-var isMuted = false;;
+var isMuted = false;
+var nightmareM = false;
 
 var buttonStart = null;
 var buttonReplay = null;
@@ -34,6 +37,12 @@ var gr2 = null;
 var hand = null;
 var badThing1 = null;
 var badThing2 = null;
+
+/// Paths ///
+
+var backgroundP = 'imgs/background.jpg';
+var perilaP = 'imgs/perila_4_flat.png';
+var fonP = 'imgs/fon.png';
 
 /// Constantly use ///
 
@@ -131,7 +140,7 @@ var moveBackGround = function (s) {
 };
 var jump = {
     h: 250,
-    speed: 9 * (height / 662),
+    speed: (9+nM) * (height / 662),
     startPosition: 0,
     state: "down",
     isGrounded: true,
@@ -196,7 +205,7 @@ function GetBackground(path, X) {
     return game.newImageObject({
         x: X || 0,
         y: 0,
-        file: path || 'imgs/background.jpg',
+        file: path || backgroundP,
         h: height,
         w: width,
     });
@@ -205,7 +214,7 @@ function GetGround() {
     return game.newImageObject({
         x: 0,
         y: height - (width / 722)*165+(width / 1444)*99,
-        file: 'imgs/perila_4_flat.png',
+        file: perilaP,
         w: width,
     });
 }
@@ -311,6 +320,81 @@ function randLine(obj1, obj2, len) {
     obj2.w = len;
     newPoints.placeLight(obj1, obj2, region);
 }
+function moveEffects(){
+	effects1.w = badThing1.w*5;
+	effects1.x = badThing1.x+badThing1.w/2-effects1.w/2;
+	effects1.y = badThing1.y+badThing1.h/2-effects1.h/2;
+	effects2.w = badThing2.w*5;
+	effects2.x = badThing2.x+badThing2.w/2-effects2.w/2;
+	effects2.y = badThing2.y+badThing2.h/2-effects2.h/2;
+}
+function nightmareMod(){
+	nM = 6;
+	backgroundP = 'imgs/MHNMB.png';
+	perilaP = 'imgs/MHNMP.png';
+	fonP = 'imgs/MHNMF.png';
+	mianMusic = mianMusicNM;
+	deathSound = deathSoundNM;
+	mianMenuMusic = mianMenuMusicNM;
+	nightmareM = true;
+}
+function cheats(){
+	if(code=='nightmarem' || code=='debug')
+	{
+		if(code=='nightmarem')
+		{
+			mianMenuMusic.stop();
+			nightmareMod();
+			code='';
+		}
+		else
+		{
+			isDebug = !isDebug;
+			code='';
+		}
+	}
+	else
+	{
+		if (pjs.keyControl.isPress('N')) {
+		code += 'n';
+		}
+		if (pjs.keyControl.isPress('I')) {
+		code += 'i';
+		}
+		if (pjs.keyControl.isPress('G')) {
+		code += 'g';
+		}
+		if (pjs.keyControl.isPress('H')) {
+		code += 'h';
+		}
+		if (pjs.keyControl.isPress('T')) {
+		code += 't';
+		}
+		if (pjs.keyControl.isPress('M')) {
+		code += 'm';
+		}
+		if (pjs.keyControl.isPress('A')) {
+		code += 'a';
+		}
+		if (pjs.keyControl.isPress('R')) {
+		code += 'r';
+		}
+		if (pjs.keyControl.isPress('E')) {
+		code += 'e';
+		}
+		if (pjs.keyControl.isPress('D')) {
+		code += 'd';
+		}
+		if (pjs.keyControl.isPress('B')) {
+		code += 'b';
+		}
+		if (pjs.keyControl.isPress('U')) {
+		code += 'u';
+		}
+		if(code.length>10)
+			code='';
+	}
+}
 
 /// Debug ///
 
@@ -364,8 +448,8 @@ function createGame() {
     game.clear();
     scoreCounter.score = 0;
     background0 = GetBackground();
-    background1 = GetBackground('imgs/fon.png');
-    background2 = GetBackground('imgs/fon.png', background1.x + background1.w);
+    background1 = GetBackground(fonP);
+    background2 = GetBackground(fonP, background1.x + background1.w);
     gr1 = GetGround();
     gr2 = GetGround();
     effects1 = GetEffects();
@@ -384,6 +468,10 @@ function createGame() {
     newPoints.placeLight(gr2, badThing2, 1000);
     effects1.turn(angle);
 	effects2.turn(angle);
+	if(nightmareM)
+		nM = 6;
+	else
+		nM = 0;
 }
 
 /// Controls ///
@@ -413,7 +501,9 @@ game.newLoop('game', function () {
     effects1.draw();
 	effects2.draw();
     if (!isPaused) {
-        moveBackGround(20 * (width / 1366));
+        moveBackGround((20+nM) * (width / 1366));
+		if(nightmareM)
+			nM += 0.005;
         scoreCounter.increase();
         jump.key();
     }
@@ -425,15 +515,6 @@ game.newLoop('game', function () {
     intersection();
 	moveEffects(); 
 });
-
-function moveEffects(){
-	effects1.w = badThing1.w*5;
-	effects1.x = badThing1.x+badThing1.w/2-effects1.w/2;
-	effects1.y = badThing1.y+badThing1.h/2-effects1.h/2;
-	effects2.w = badThing2.w*5;
-	effects2.x = badThing2.x+badThing2.w/2-effects2.w/2;
-	effects2.y = badThing2.y+badThing2.h/2-effects2.h/2;
-}
 
 game.newLoop('menu', function () {
     if (!mianMenuMusic.playing && !isMuted)
@@ -456,9 +537,7 @@ game.newLoop('guide', function () {
         game.setLoop('menu');
     }
     mute();
-	if (pjs.keyControl.isPress('D')) {
-        isDebug = !isDebug;
-    }
+	cheats();
 });
 game.newLoop('deathScreen', function () {
     if (pjs.keyControl.isPress("R") || pjs.touchControl.isDown()) {
@@ -472,5 +551,8 @@ game.newLoop('deathScreen', function () {
 var mianMusic = pjs.audio.newAudio("Sound/PLAY_2.mp3", 0.1);
 var deathSound = pjs.audio.newAudio("Sound/DEATH_1.mp3", 0.5);
 var mianMenuMusic = pjs.audio.newAudio("Sound/MIAN_MENU_2.mp3", 0.1);
+var mianMusicNM = pjs.audio.newAudio("Sound/MHNMP.mp3", 0.1);
+var deathSoundNM = pjs.audio.newAudio("Sound/MHNMD.mp3", 0.5);
+var mianMenuMusicNM = pjs.audio.newAudio("Sound/MHNMMM.mp3", 0.1);
 createMenus();
 game.startLoop('menu');
