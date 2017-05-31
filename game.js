@@ -427,8 +427,6 @@ game.newLoop('game', function () {
 });
 
 function moveEffects(){
-	effects1.h = height;
-	effects2.h = height;
 	effects1.w = badThing1.w*5;
 	effects1.x = badThing1.x+badThing1.w/2-effects1.w/2;
 	effects1.y = badThing1.y+badThing1.h/2-effects1.h/2;
