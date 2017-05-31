@@ -207,13 +207,13 @@ function GetGround() {
         y: height - (width / 722)*165+(width / 1444)*99,
         file: 'imgs/perila_4_flat.png',
         w: width,
-
     });
 }
 function GetEffects() {
     return game.newImageObject({
         x: 0, y: 500,
         file: 'imgs/ShadowAndLighthingFinal.png',
+		h: height*9/10,
     });
 }
 function GetButton(path, X, Y, W, H) {
