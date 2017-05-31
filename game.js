@@ -66,25 +66,25 @@ var newPoints = {
         return newP;
     },
     connectRaillings: function (obj1, obj2) {
-        var newPointStart = newPoints.rotateObject(obj1);	//������ �������
+        var newPointStart = newPoints.rotateObject(obj1);	
 
-        newPointStart.x += obj1.w * Math.cos(this.angle * (Math.PI / 180));// ����� ������ �������
+        newPointStart.x += obj1.w * Math.cos(this.angle * (Math.PI / 180));
         newPointStart.y += obj1.w * Math.sin(this.angle * (Math.PI / 180));
 
         obj2.x = obj2.y = 0;
-        var newPointEnd = newPoints.rotateObject(obj2);	//������ �������
+        var newPointEnd = newPoints.rotateObject(obj2);
 
         obj2.x = newPointStart.x - newPointEnd.x;
         obj2.y = newPointStart.y - newPointEnd.y;
     },
     moveHand: function (obj1, obj2) {
-        var newPointStart = newPoints.rotateObject(obj1);	//������ �������
+        var newPointStart = newPoints.rotateObject(obj1);
 
-        newPointStart.x += (width / 4) * Math.cos(this.angle * (Math.PI / 180));// ����� ������ �������
+        newPointStart.x += (width / 4) * Math.cos(this.angle * (Math.PI / 180));
         newPointStart.y += (width / 4) * Math.sin(this.angle * (Math.PI / 180));
 
         obj2.x = obj2.y = 0;
-        var newPointEnd = newPoints.rotateObject(obj2);	//������ �������
+        var newPointEnd = newPoints.rotateObject(obj2);
 
         obj2.x = newPointStart.x - newPointEnd.x;
         obj2.y = newPointStart.y - newPointEnd.y - (obj2.h / Math.cos(this.angle * (Math.PI / 180)));
@@ -204,7 +204,7 @@ function GetBackground(path, X) {
 function GetGround() {
     return game.newImageObject({
         x: 0,
-        y: height - (height / 3),
+        y: height - (width / 722)*165+(width / 1444)*99,
         file: 'imgs/perila_4_flat.png',
         w: width,
 
@@ -450,15 +450,15 @@ game.newLoop('menu', function () {
         game.setLoop('guide');
     }
     mute();
-    if (pjs.keyControl.isPress('D')) {
-        isDebug = !isDebug;
-    }
 });
 game.newLoop('guide', function () {
     if (pjs.mouseControl.isPress('LEFT') || pjs.touchControl.isDown()) {
         game.setLoop('menu');
     }
     mute();
+	if (pjs.keyControl.isPress('D')) {
+        isDebug = !isDebug;
+    }
 });
 game.newLoop('deathScreen', function () {
     if (pjs.keyControl.isPress("R") || pjs.touchControl.isDown()) {
