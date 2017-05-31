@@ -430,9 +430,11 @@ function moveEffects(){
 	effects1.w = badThing1.w*5;
 	effects1.x = badThing1.x+badThing1.w/2-effects1.w/2;
 	effects1.y = badThing1.y+badThing1.h/2-effects1.h/2;
+	effects1.h = (width / 722)*165;
 	effects2.w = badThing2.w*5;
 	effects2.x = badThing2.x+badThing2.w/2-effects2.w/2;
 	effects2.y = badThing2.y+badThing2.h/2-effects2.h/2;
+	effects2.h = (width / 722)*165;
 }
 
 game.newLoop('menu', function () {
