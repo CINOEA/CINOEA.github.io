@@ -503,7 +503,7 @@ game.newLoop('game', function () {
     if (!isPaused) {
         moveBackGround((20+nM) * (width / 1366));
 		if(nightmareM)
-			nM += 0.005;
+			nM += 0.01;
         scoreCounter.increase();
         jump.key();
     }
@@ -527,7 +527,8 @@ game.newLoop('menu', function () {
         game.setLoop('game');
     }
     if (pjs.mouseControl.isPeekObject('LEFT', buttonGuide) || pjs.touchControl.isPeekObject(buttonGuide)) {
-        drawGuide();
+        code='';
+		drawGuide();
         game.setLoop('guide');
     }
     mute();
